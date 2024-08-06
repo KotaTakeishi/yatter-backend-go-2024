@@ -9,6 +9,7 @@ import (
 )
 
 type Account interface {
+	FindByUsername(ctx context.Context, username string) (*GetAccountDTO, error)
 	Create(ctx context.Context, username, password string) (*CreateAccountDTO, error)
 }
 
@@ -32,6 +33,17 @@ func NewAcocunt(db *sqlx.DB, accountRepo repository.Account) *account {
 		db:          db,
 		accountRepo: accountRepo,
 	}
+}
+
+func (a *account) FindByUsername(ctx context.Context, username string) (*GetAccountDTO, error) {
+	acc, err := a.accountRepo.FindByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GetAccountDTO{
+		Account: acc,
+	}, nil
 }
 
 func (a *account) Create(ctx context.Context, username, password string) (*CreateAccountDTO, error) {
