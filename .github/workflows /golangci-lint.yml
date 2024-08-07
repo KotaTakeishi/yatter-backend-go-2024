@@ -3,7 +3,7 @@ name: GolangCI Lint
 on:
   push:
     branches:
-      - '**'
+      - main
   pull_request:
     branches:
       - main
