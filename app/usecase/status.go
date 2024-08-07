@@ -19,7 +19,9 @@ type status struct {
 }
 
 type CreateStatusDTO struct {
-	Status *object.Status
+	Status struct {
+		Status string `json:"status"`
+	}
 }
 
 type GetStatusDTO struct {
@@ -68,6 +70,8 @@ func (s *status) Create(ctx context.Context, account_id int, content string) (*C
 	}
 
 	return &CreateStatusDTO{
-		Status: status,
+		Status: struct {
+			Status string `json:"status"`
+		}{Status: status.Content},
 	}, nil
 }
