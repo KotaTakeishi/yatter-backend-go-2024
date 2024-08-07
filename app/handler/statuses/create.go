@@ -2,7 +2,6 @@ package statuses
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"yatter-backend-go/app/domain/auth"
 )
@@ -20,12 +19,9 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Request: %v", req.Status)
-
 	ctx := r.Context()
 
 	account_info := auth.AccountOf(r.Context()) // 認証情報を取得する
-	log.Printf("Account Info: %v", account_info.ID)
 
 	dto, err := h.statusUsecase.Create(ctx, int(account_info.ID), req.Status)
 	if err != nil {
