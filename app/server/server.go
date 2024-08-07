@@ -28,9 +28,10 @@ func Run() error {
 
 	accountUsecase := usecase.NewAcocunt(db, dao.NewAccount(db))
 	statusesUsecase := usecase.NewStatus(db, dao.NewAccount(db), dao.NewStatus(db))
+	timelineUsecase := usecase.NewTimeline(db, dao.NewTimeline(db))
 
 	r := handler.NewRouter(
-		accountUsecase, statusesUsecase, dao.NewAccount(db),
+		accountUsecase, statusesUsecase, timelineUsecase, dao.NewAccount(db),
 	)
 
 	ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGTERM, os.Interrupt)
