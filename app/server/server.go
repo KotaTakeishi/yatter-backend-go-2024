@@ -27,7 +27,7 @@ func Run() error {
 	log.Printf("Serve on http://%s", addr)
 
 	accountUsecase := usecase.NewAcocunt(db, dao.NewAccount(db))
-	statusesUsecase := usecase.NewStatus(db, dao.NewStatus(db))
+	statusesUsecase := usecase.NewStatus(db, dao.NewAccount(db), dao.NewStatus(db))
 
 	r := handler.NewRouter(
 		accountUsecase, statusesUsecase, dao.NewAccount(db),
