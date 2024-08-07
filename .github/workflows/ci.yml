@@ -8,19 +8,20 @@ on:
 
 # WIP
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Docker compose up
-      run: docker-compose up -d
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.22
+
+    - name: Install dependencies
+      run: make mod
 
     - name: Run tests
-      run: docker compose exec web make test
-
-    - name: Stop and remove docker containers
-      run: docker-compose down
-      if: always()
+      run: make test
