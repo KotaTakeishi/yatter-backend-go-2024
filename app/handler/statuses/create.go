@@ -23,7 +23,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	account_info := auth.AccountOf(r.Context()) // 認証情報を取得する
 
-	dto, err := h.statusUsecase.Create(ctx, int(account_info.ID), req.Status)
+	dto, err := h.statusUsecase.Create(ctx, account_info.ID, req.Status)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

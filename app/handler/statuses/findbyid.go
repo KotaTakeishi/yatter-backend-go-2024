@@ -17,7 +17,7 @@ func (h *handler) FindByID(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	dto, err := h.statusUsecase.FindByID(ctx, id)
+	dto, err := h.statusUsecase.FindByID(ctx, int64(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

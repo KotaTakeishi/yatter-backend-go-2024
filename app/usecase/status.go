@@ -9,8 +9,8 @@ import (
 )
 
 type Status interface {
-	FindByID(ctx context.Context, id int) (*GetStatusDTO, error)
-	Create(ctx context.Context, account_id int, content string) (*CreateStatusDTO, error)
+	FindByID(ctx context.Context, id int64) (*GetStatusDTO, error)
+	Create(ctx context.Context, account_id int64, content string) (*CreateStatusDTO, error)
 }
 
 type status struct {
@@ -37,7 +37,7 @@ func NewStatus(db *sqlx.DB, statusRepo repository.Status) *status {
 	}
 }
 
-func (s *status) FindByID(ctx context.Context, id int) (*GetStatusDTO, error) {
+func (s *status) FindByID(ctx context.Context, id int64) (*GetStatusDTO, error) {
 	status, err := s.statusRepo.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (s *status) FindByID(ctx context.Context, id int) (*GetStatusDTO, error) {
 	}, nil
 }
 
-func (s *status) Create(ctx context.Context, account_id int, content string) (*CreateStatusDTO, error) {
+func (s *status) Create(ctx context.Context, account_id int64, content string) (*CreateStatusDTO, error) {
 	status := object.NewStatus(account_id, content)
 
 	tx, err := s.db.Beginx()

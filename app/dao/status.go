@@ -25,7 +25,7 @@ func NewStatus(db *sqlx.DB) *status {
 	return &status{db: db}
 }
 
-func (s *status) FindByID(ctx context.Context, id int) (*object.Status, error) {
+func (s *status) FindByID(ctx context.Context, id int64) (*object.Status, error) {
 	entity := new(object.Status)
 	err := s.db.QueryRowxContext(ctx, "select * from status where id = ?", id).StructScan(entity)
 	if err != nil {
