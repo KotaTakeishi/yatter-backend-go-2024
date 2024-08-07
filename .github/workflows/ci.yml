@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
+    paths:
+      - "app/**"
   pull_request:
     branches:
       - main
+    paths:
+      - "app/**"
 
 jobs:
   lint-test:
