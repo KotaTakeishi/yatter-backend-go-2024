@@ -9,6 +9,7 @@ import (
 )
 
 type Status interface {
+	FindByID(ctx context.Context, id int) (*GetStatusDTO, error)
 	Create(ctx context.Context, account_id int, content string) (*CreateStatusDTO, error)
 }
 
@@ -21,6 +22,10 @@ type CreateStatusDTO struct {
 	Status *object.Status
 }
 
+type GetStatusDTO struct {
+	Status *object.Status
+}
+
 var _ Status = (*status)(nil)
 
 func NewStatus(db *sqlx.DB, statusRepo repository.Status) *status {
@@ -28,6 +33,17 @@ func NewStatus(db *sqlx.DB, statusRepo repository.Status) *status {
 		db:         db,
 		statusRepo: statusRepo,
 	}
+}
+
+func (s *status) FindByID(ctx context.Context, id int) (*GetStatusDTO, error) {
+	status, err := s.statusRepo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GetStatusDTO{
+		Status: status,
+	}, nil
 }
 
 func (s *status) Create(ctx context.Context, account_id int, content string) (*CreateStatusDTO, error) {
