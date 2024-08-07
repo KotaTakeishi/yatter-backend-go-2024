@@ -21,7 +21,7 @@ test:
 lint:
 	if ! [ -x $(HOME)/.local/bin/golangci-lint ]; then \
 		mkdir -p $(HOME)/.local/bin; \
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(HOME)/.local/bin v1.45.2; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(HOME)/.local/bin; \
 	fi
 	$(HOME)/.local/bin/golangci-lint run --concurrency 2
 
