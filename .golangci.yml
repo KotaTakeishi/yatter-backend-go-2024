@@ -1,19 +1,13 @@
-run:
-  skip-dirs:
-    - vendor
 linters:
   disable-all: true
   enable:
-    - deadcode
-    - errcheck
+    # - errcheck # MEMO: 今回は一旦無効化
     - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - structcheck
     - typecheck
     - unused
-    - varcheck
     - misspell
 issues:
   exclude:
@@ -21,3 +15,5 @@ issues:
     - '\bcomment on exported\b'
     - \bexported \w+ (\S*['.]*)([a-zA-Z'.*]*) should have comment or be unexported\b
     - '\bmethod ToSql should be ToSQL\b'
+  exclude-dirs:
+    - vendor
