@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"time"
 	"yatter-backend-go/app/domain/object"
 	"yatter-backend-go/app/domain/repository"
 
@@ -14,26 +15,33 @@ type Status interface {
 }
 
 type status struct {
-	db         *sqlx.DB
-	statusRepo repository.Status
+	db           *sqlx.DB
+	acccountRepo repository.Account
+	statusRepo   repository.Status
 }
 
 type CreateStatusDTO struct {
-	Status struct {
+	Status *struct {
 		Status string `json:"status"`
 	}
 }
 
 type GetStatusDTO struct {
-	Status *object.Status
+	Status *struct {
+		ID       int64           `json:"id"`
+		Account  *object.Account `json:"account"`
+		Content  string          `json:"content"`
+		CreateAt time.Time       `json:"create_at"`
+	}
 }
 
 var _ Status = (*status)(nil)
 
-func NewStatus(db *sqlx.DB, statusRepo repository.Status) *status {
+func NewStatus(db *sqlx.DB, accountRepo repository.Account, statusRepo repository.Status) *status {
 	return &status{
-		db:         db,
-		statusRepo: statusRepo,
+		db:           db,
+		acccountRepo: accountRepo,
+		statusRepo:   statusRepo,
 	}
 }
 
@@ -43,8 +51,23 @@ func (s *status) FindByID(ctx context.Context, id int64) (*GetStatusDTO, error) 
 		return nil, err
 	}
 
+	account, err := s.acccountRepo.FindByID(ctx, status.AccountID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &GetStatusDTO{
-		Status: status,
+		Status: &struct {
+			ID       int64           `json:"id"`
+			Account  *object.Account `json:"account"`
+			Content  string          `json:"content"`
+			CreateAt time.Time       `json:"create_at"`
+		}{
+			ID:       status.ID,
+			Account:  account,
+			Content:  status.Content,
+			CreateAt: status.CreateAt,
+		},
 	}, nil
 }
 
@@ -70,7 +93,7 @@ func (s *status) Create(ctx context.Context, account_id int64, content string) (
 	}
 
 	return &CreateStatusDTO{
-		Status: struct {
+		Status: &struct {
 			Status string `json:"status"`
 		}{Status: status.Content},
 	}, nil
