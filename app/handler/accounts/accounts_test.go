@@ -29,6 +29,11 @@ func (m *MockAccountUsecase) Create(ctx context.Context, username, password stri
 	return args.Get(0).(*usecase.CreateAccountDTO), args.Error(1)
 }
 
+func (m *MockAccountUsecase) Update(ctx context.Context, id int64, display_name, note, avatar, header *string) (*usecase.UpdateAccountDTO, error) {
+	args := m.Called(ctx, id, display_name, note, avatar, header)
+	return args.Get(0).(*usecase.UpdateAccountDTO), args.Error(1)
+}
+
 func TestFindByUsername(t *testing.T) {
 	mockUsecase := new(MockAccountUsecase)
 	handler := &handler{accountUsecase: mockUsecase}

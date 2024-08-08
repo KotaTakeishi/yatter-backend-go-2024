@@ -16,4 +16,6 @@ type Account interface {
 	FindByID(ctx context.Context, id int64) (*object.Account, error)
 	// Create a new account
 	Create(ctx context.Context, tx *sqlx.Tx, acc *object.Account) error
+	// Update account
+	Update(ctx context.Context, tx *sqlx.Tx, acc *object.Account) error
 }

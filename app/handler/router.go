@@ -32,7 +32,7 @@ func NewRouter(au usecase.Account, su usecase.Status, tu usecase.Timeline, ar re
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Mount("/v1/accounts", accounts.NewRouter(au))
+	r.Mount("/v1/accounts", accounts.NewRouter(ar, au))
 	r.Mount("/v1/statuses", statuses.NewRouter(ar, su))
 	r.Mount("/v1/timelines", timeline.NewRouter(tu))
 	r.Mount("/v1/health", health.NewRouter())

@@ -64,3 +64,14 @@ func (a *account) Create(ctx context.Context, tx *sqlx.Tx, acc *object.Account) 
 
 	return nil
 }
+
+// Update : アカウント情報を更新
+func (a *account) Update(ctx context.Context, tx *sqlx.Tx, acc *object.Account) error {
+	_, err := tx.Exec("update account set display_name = ?, avatar = ?, header = ?, note = ? where id = ?",
+		acc.DisplayName, acc.Avatar, acc.Header, acc.Note, acc.ID)
+	if err != nil {
+		return fmt.Errorf("failed to update account: %w", err)
+	}
+
+	return nil
+}
