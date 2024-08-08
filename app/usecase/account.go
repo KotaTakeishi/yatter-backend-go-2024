@@ -11,6 +11,7 @@ import (
 type Account interface {
 	FindByUsername(ctx context.Context, username string) (*GetAccountDTO, error)
 	Create(ctx context.Context, username, password string) (*CreateAccountDTO, error)
+	Update(ctx context.Context, id int64, display_name, note, avatar, header *string) (*UpdateAccountDTO, error)
 }
 
 type account struct {
@@ -18,11 +19,15 @@ type account struct {
 	accountRepo repository.Account
 }
 
+type GetAccountDTO struct {
+	Account *object.Account
+}
+
 type CreateAccountDTO struct {
 	Account *object.Account
 }
 
-type GetAccountDTO struct {
+type UpdateAccountDTO struct {
 	Account *object.Account
 }
 
@@ -70,6 +75,47 @@ func (a *account) Create(ctx context.Context, username, password string) (*Creat
 	}
 
 	return &CreateAccountDTO{
+		Account: acc,
+	}, nil
+}
+
+func (a *account) Update(ctx context.Context, id int64, display_name, note, avatar, header *string) (*UpdateAccountDTO, error) {
+	acc, err := a.accountRepo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if display_name != nil {
+		acc.DisplayName = display_name
+	}
+	if note != nil {
+		acc.Note = note
+	}
+	if avatar != nil {
+		acc.Avatar = avatar
+	}
+	if header != nil {
+		acc.Header = header
+	}
+
+	tx, err := a.db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			tx.Rollback()
+		}
+
+		tx.Commit()
+	}()
+
+	if err := a.accountRepo.Update(ctx, tx, acc); err != nil {
+		return nil, err
+	}
+
+	return &UpdateAccountDTO{
 		Account: acc,
 	}, nil
 }
