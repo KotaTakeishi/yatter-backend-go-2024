@@ -10,7 +10,7 @@ import (
 )
 
 type Timeline interface {
-	FindPublicTimelines(ctx context.Context) (*GetTimelineDTOs, error)
+	FindPublicTimelines(ctx context.Context, limit int) (*GetTimelineDTOs, error)
 }
 
 type timeline struct {
@@ -40,8 +40,8 @@ func NewTimeline(db *sqlx.DB, accountRepo repository.Account, timelineRepo repos
 	}
 }
 
-func (t *timeline) FindPublicTimelines(ctx context.Context) (*GetTimelineDTOs, error) {
-	timeline, err := t.timelineRepo.FindPublicTimelines(ctx)
+func (t *timeline) FindPublicTimelines(ctx context.Context, limit int) (*GetTimelineDTOs, error) {
+	timeline, err := t.timelineRepo.FindPublicTimelines(ctx, limit)
 	if err != nil {
 		return nil, err
 	}

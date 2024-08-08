@@ -26,9 +26,9 @@ func NewTimeline(db *sqlx.DB) *timeline {
 	return &timeline{db: db}
 }
 
-func (t *timeline) FindPublicTimelines(ctx context.Context) ([]*object.Status, error) {
+func (t *timeline) FindPublicTimelines(ctx context.Context, limit int) ([]*object.Status, error) {
 	entities := []*object.Status{}
-	rows, err := t.db.QueryxContext(ctx, "select * from status")
+	rows, err := t.db.QueryxContext(ctx, "select * from status limit ?", limit)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
