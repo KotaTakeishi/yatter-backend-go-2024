@@ -261,12 +261,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: max_id
-          in: query
-          description: Get a list of followings with ID less than this value
-          required: false
-          schema:
-            type: integer
         - name: since_id
           in: query
           description: Get a list of followings with ID greater than this value
@@ -456,24 +450,17 @@ paths:
           schema:
             type: boolean
             example: false
-        - &a2
-          name: max_id
-          in: query
-          description: Get a list of followings with ID less than this value
-          required: false
-          schema:
-            type: integer
         - &a3
           name: since_id
           in: query
-          description: Get a list of followings with ID greater than this value
+          description: Get a list with ID greater than this value
           required: false
           schema:
             type: integer
         - &a4
           name: limit
           in: query
-          description: Maximum number of followings to get (Default 40, Max 80)
+          description: Maximum number to get (Default 40, Max 80)
           required: false
           schema:
             type: integer
@@ -495,9 +482,18 @@ paths:
       operationId: findPublicTimelines
       parameters:
         - *a1
-        - *a2
-        - *a3
-        - *a4
+        - name: since_id
+          in: query
+          description: Get a list with ID greater than this value
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Maximum number to get (Default 40, Max 80)
+          required: false
+          schema:
+            type: integer
       responses: *a5
 externalDocs:
   description: Find out more about Swagger
