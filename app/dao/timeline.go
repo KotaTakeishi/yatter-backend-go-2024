@@ -41,13 +41,13 @@ func (t *timeline) FindPublicTimelines(ctx context.Context) ([]*object.Status, e
 	defer rows.Close()
 
 	for rows.Next() {
-		var entity object.Status
-		err := rows.StructScan(&entity)
+		entity := new(object.Status)
+		err := rows.StructScan(entity)
 		if err != nil {
 			log.Printf("failed to scan row: %v", err)
 			continue
 		}
-		entities = append(entities, &entity)
+		entities = append(entities, entity)
 	}
 
 	return entities, nil
