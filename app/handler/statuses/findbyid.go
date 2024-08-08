@@ -11,7 +11,7 @@ import (
 func (h *handler) FindByID(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -22,7 +22,7 @@ func (h *handler) FindByID(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if dto.Status == nil {
+	if dto == nil {
 		http.Error(w, "status not found", http.StatusNotFound)
 		return
 	}

@@ -50,6 +50,9 @@ func (s *status) FindByID(ctx context.Context, id int64) (*GetStatusDTO, error) 
 	if err != nil {
 		return nil, err
 	}
+	if status == nil {
+		return nil, nil
+	}
 
 	account, err := s.acccountRepo.FindByID(ctx, status.AccountID)
 	if err != nil {
