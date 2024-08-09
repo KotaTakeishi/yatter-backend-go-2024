@@ -24,7 +24,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	account_info := auth.AccountOf(r.Context())
+	account_info := auth.AccountOf(ctx)
 
 	dto, err := h.accountUsecase.Update(ctx, account_info.ID, req.DisplayName, req.Note, req.Avatar, req.Header)
 	if err != nil {

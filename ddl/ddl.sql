@@ -19,3 +19,13 @@ CREATE TABLE `status` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
 );
+
+CREATE TABLE `relationship` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `follower_id` bigint(20) NOT NULL,
+  `followee_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`follower_id`) REFERENCES `account` (`id`),
+  FOREIGN KEY (`followee_id`) REFERENCES `account` (`id`),
+  UNIQUE KEY `unique_follower_followee` (`follower_id`, `followee_id`)
+);
