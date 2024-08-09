@@ -26,5 +26,6 @@ CREATE TABLE `relationship` (
   `followee_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`follower_id`) REFERENCES `account` (`id`),
-  FOREIGN KEY (`followee_id`) REFERENCES `account` (`id`)
+  FOREIGN KEY (`followee_id`) REFERENCES `account` (`id`),
+  UNIQUE KEY `unique_follower_followee` (`follower_id`, `followee_id`)
 );
