@@ -22,8 +22,8 @@ CREATE TABLE `status` (
 
 CREATE TABLE `relationship` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `follower_id` boolean NOT NULL,
-  `followee_id` boolean NOT NULL,
+  `follower_id` bigint(20) NOT NULL,
+  `followee_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`follower_id`) REFERENCES `account` (`id`),
   FOREIGN KEY (`followee_id`) REFERENCES `account` (`id`)
