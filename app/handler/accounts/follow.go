@@ -28,6 +28,10 @@ func (h *handler) Follow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	follower := auth.AccountOf(ctx)
+	if follower.ID == followee.Account.ID {
+		http.Error(w, "cannot follow yourself", http.StatusBadRequest)
+		return
+	}
 
 	dto, err := h.accountUsecase.Follow(ctx, follower.ID, followee.Account.ID)
 	if err != nil {
