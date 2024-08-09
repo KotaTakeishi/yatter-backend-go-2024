@@ -76,8 +76,9 @@ func (a *account) Update(ctx context.Context, tx *sqlx.Tx, acc *object.Account) 
 	return nil
 }
 
+// Follow : フォロー
 func (a *account) Follow(ctx context.Context, tx *sqlx.Tx, followerID, followeeID int64) error {
-	_, err := tx.Exec("insert into follow (follower_id, followee_id) values (?, ?)", followerID, followeeID)
+	_, err := tx.Exec("insert into relationship (follower_id, followee_id) values (?, ?)", followerID, followeeID)
 	if err != nil {
 		return fmt.Errorf("failed to insert follow: %w", err)
 	}

@@ -13,6 +13,7 @@ type Account interface {
 	FindByUsername(ctx context.Context, username string) (*GetAccountDTO, error)
 	Create(ctx context.Context, username, password string) (*CreateAccountDTO, error)
 	Update(ctx context.Context, id int64, display_name, note, avatar, header *string) (*UpdateAccountDTO, error)
+	Follow(ctx context.Context, followerID, followeeID int64) (*FollowAccountDTO, error)
 }
 
 type account struct {
@@ -30,6 +31,13 @@ type CreateAccountDTO struct {
 
 type UpdateAccountDTO struct {
 	Account *object.Account
+}
+
+type FollowAccountDTO struct {
+	Relation *struct {
+		Following    bool `json:"following"`
+		Followerd_by bool `json:"followerd_by"`
+	}
 }
 
 var _ Account = (*account)(nil)
@@ -126,5 +134,38 @@ func (a *account) Update(ctx context.Context, id int64, display_name, note, avat
 
 	return &UpdateAccountDTO{
 		Account: acc,
+	}, nil
+}
+
+func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*FollowAccountDTO, error) {
+	tx, err := a.db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				log.Printf("tx.Rollback() failed: %v", rbErr)
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			log.Printf("tx.Commit() failed: %v", err)
+		}
+	}()
+
+	if err := a.accountRepo.Follow(ctx, tx, followerID, followeeID); err != nil {
+		return nil, err
+	}
+
+	return &FollowAccountDTO{
+		Relation: &struct {
+			Following    bool `json:"following"`
+			Followerd_by bool `json:"followerd_by"`
+		}{
+			Following:    true,
+			Followerd_by: false,
+		},
 	}, nil
 }

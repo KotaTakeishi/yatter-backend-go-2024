@@ -29,6 +29,7 @@ func NewRouter(ar repository.Account, u usecase.Account) http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Use(auth.Middleware(ar))
 		r.Put("/update_credentials", h.Update)
+		r.Post("/{username}/follow", h.Follow)
 	})
 
 	return r

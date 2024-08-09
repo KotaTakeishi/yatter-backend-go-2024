@@ -34,6 +34,11 @@ func (m *MockAccountUsecase) Update(ctx context.Context, id int64, display_name,
 	return args.Get(0).(*usecase.UpdateAccountDTO), args.Error(1)
 }
 
+func (m *MockAccountUsecase) Follow(ctx context.Context, followerID, followeeID int64) (*usecase.FollowAccountDTO, error) {
+	args := m.Called(ctx, followerID, followeeID)
+	return args.Get(0).(*usecase.FollowAccountDTO), args.Error(1)
+}
+
 func TestFindByUsername(t *testing.T) {
 	mockUsecase := new(MockAccountUsecase)
 	handler := &handler{accountUsecase: mockUsecase}
