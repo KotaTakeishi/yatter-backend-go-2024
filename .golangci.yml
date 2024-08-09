@@ -1,7 +1,7 @@
 linters:
   disable-all: true
   enable:
-    # - errcheck # MEMO: 今回は一旦無効化
+    - errcheck
     - gosimple
     - govet
     - ineffassign
