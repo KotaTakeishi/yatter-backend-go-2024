@@ -37,6 +37,12 @@ type Account struct {
 	CreateAt time.Time `json:"create_at,omitempty" db:"create_at"`
 }
 
+type Relationship struct {
+	ID         int64 `json:"id" db:"id"`
+	FollowerID int64 `json:"follower_id" db:"follower_id"`
+	FolloweeID int64 `json:"followee_id" db:"followee_id"`
+}
+
 func NewAccount(username, password string) (*Account, error) {
 	account := &Account{
 		Username: username,

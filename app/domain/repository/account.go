@@ -20,4 +20,6 @@ type Account interface {
 	Update(ctx context.Context, tx *sqlx.Tx, acc *object.Account) error
 	// Follow account
 	Follow(ctx context.Context, tx *sqlx.Tx, followerID, followeeID int64) error
+	// Fetch relationships
+	GetRelationships(ctx context.Context, authUserID int64) ([]*object.Relationship, error)
 }

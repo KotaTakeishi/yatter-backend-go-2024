@@ -35,8 +35,9 @@ type UpdateAccountDTO struct {
 
 type FollowAccountDTO struct {
 	Relation *struct {
-		Following    bool `json:"following"`
-		Followerd_by bool `json:"followerd_by"`
+		ID           int64 `json:"id"`
+		Following    bool  `json:"following"`
+		Followerd_by bool  `json:"followerd_by"`
 	}
 }
 
@@ -159,13 +160,31 @@ func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*Fo
 		return nil, err
 	}
 
+	relationships, err := a.accountRepo.GetRelationships(ctx, followerID)
+	if err != nil {
+		return nil, err
+	}
+
+	Following := false
+	Followerd_by := false
+	for _, r := range relationships {
+		if r.FollowerID == followerID && r.FolloweeID == followeeID {
+			Following = true
+		}
+		if r.FollowerID == followeeID && r.FolloweeID == followerID {
+			Followerd_by = true
+		}
+	}
+
 	return &FollowAccountDTO{
 		Relation: &struct {
-			Following    bool `json:"following"`
-			Followerd_by bool `json:"followerd_by"`
+			ID           int64 `json:"id"`
+			Following    bool  `json:"following"`
+			Followerd_by bool  `json:"followerd_by"`
 		}{
-			Following:    true,
-			Followerd_by: false,
+			ID:           followeeID,
+			Following:    Following,
+			Followerd_by: Followerd_by,
 		},
 	}, nil
 }

@@ -85,3 +85,28 @@ func (a *account) Follow(ctx context.Context, tx *sqlx.Tx, followerID, followeeI
 
 	return nil
 }
+
+func (a *account) GetRelationships(ctx context.Context, authUserID int64) ([]*object.Relationship, error) {
+	entities := []*object.Relationship{}
+	rows, err := a.db.QueryxContext(ctx, "select * from relationship where follower_id = ? or followee_id = ?", authUserID, authUserID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		return nil, fmt.Errorf("failed to get relationships: %w", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		entity := new(object.Relationship)
+		err := rows.StructScan(entity)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		entities = append(entities, entity)
+	}
+
+	return entities, nil
+}
