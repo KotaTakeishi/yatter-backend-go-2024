@@ -144,33 +144,40 @@ func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*Fo
 		return nil, err
 	}
 
-	if err := a.accountRepo.Follow(ctx, tx, followerID, followeeID); err != nil {
-		return nil, err
-	}
-
-	if err := recover(); err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			log.Printf("tx.Rollback() failed: %v", rbErr)
+	defer func() {
+		if err := recover(); err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				log.Printf("tx.Rollback() failed: %v", rbErr)
+			}
 		}
-	}
 
-	if err := tx.Commit(); err != nil {
-		log.Printf("tx.Commit() failed: %v", err)
-	}
+		if err := tx.Commit(); err != nil {
+			log.Printf("tx.Commit() failed: %v", err)
+		}
+	}()
 
-	relationships, err := a.accountRepo.GetRelationships(ctx, followerID)
-	if err != nil {
+	if err := a.accountRepo.Follow(ctx, tx, followerID, followeeID); err != nil {
 		return nil, err
 	}
 
 	following := false
 	followerd_by := false
-	for _, r := range relationships {
-		if r.FollowerID == followerID && r.FolloweeID == followeeID {
-			following = true
+
+	if err := tx.Commit(); err != nil {
+		log.Printf("follow transaction failed: %v", err)
+	} else {
+		// FollowによってDBの更新が成功してからRelationshipを取得する
+		relationships, err := a.accountRepo.GetRelationships(ctx, followerID)
+		if err != nil {
+			return nil, err
 		}
-		if r.FollowerID == followeeID && r.FolloweeID == followerID {
-			followerd_by = true
+		for _, r := range relationships {
+			if r.FollowerID == followerID && r.FolloweeID == followeeID {
+				following = true
+			}
+			if r.FollowerID == followeeID && r.FolloweeID == followerID {
+				followerd_by = true
+			}
 		}
 	}
 
