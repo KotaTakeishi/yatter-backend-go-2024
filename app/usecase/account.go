@@ -166,7 +166,7 @@ func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*Fo
 	if err := tx.Commit(); err != nil {
 		log.Printf("follow transaction failed: %v", err)
 	} else {
-		// FollowによってDBの更新が成功してからRelationshipを取得する
+		// FollowによってDBの更新が成功してからRelationshipを取得してDTOを構築
 		relationships, err := a.accountRepo.GetRelationships(ctx, followerID)
 		if err != nil {
 			return nil, err
