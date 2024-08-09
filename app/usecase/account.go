@@ -144,20 +144,18 @@ func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*Fo
 		return nil, err
 	}
 
-	defer func() {
-		if err := recover(); err != nil {
-			if rbErr := tx.Rollback(); rbErr != nil {
-				log.Printf("tx.Rollback() failed: %v", rbErr)
-			}
-		}
-
-		if err := tx.Commit(); err != nil {
-			log.Printf("tx.Commit() failed: %v", err)
-		}
-	}()
-
 	if err := a.accountRepo.Follow(ctx, tx, followerID, followeeID); err != nil {
 		return nil, err
+	}
+
+	if err := recover(); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			log.Printf("tx.Rollback() failed: %v", rbErr)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Printf("tx.Commit() failed: %v", err)
 	}
 
 	relationships, err := a.accountRepo.GetRelationships(ctx, followerID)
@@ -165,14 +163,14 @@ func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*Fo
 		return nil, err
 	}
 
-	Following := false
-	Followerd_by := false
+	following := false
+	followerd_by := false
 	for _, r := range relationships {
 		if r.FollowerID == followerID && r.FolloweeID == followeeID {
-			Following = true
+			following = true
 		}
 		if r.FollowerID == followeeID && r.FolloweeID == followerID {
-			Followerd_by = true
+			followerd_by = true
 		}
 	}
 
@@ -183,8 +181,8 @@ func (a *account) Follow(ctx context.Context, followerID, followeeID int64) (*Fo
 			Followerd_by bool  `json:"followerd_by"`
 		}{
 			ID:           followeeID,
-			Following:    Following,
-			Followerd_by: Followerd_by,
+			Following:    following,
+			Followerd_by: followerd_by,
 		},
 	}, nil
 }
