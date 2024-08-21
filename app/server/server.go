@@ -27,9 +27,11 @@ func Run() error {
 	log.Printf("Serve on http://%s", addr)
 
 	accountUsecase := usecase.NewAcocunt(db, dao.NewAccount(db))
+	statusesUsecase := usecase.NewStatus(db, dao.NewAccount(db), dao.NewStatus(db))
+	timelineUsecase := usecase.NewTimeline(db, dao.NewAccount(db), dao.NewTimeline(db))
 
 	r := handler.NewRouter(
-		accountUsecase, dao.NewAccount(db),
+		accountUsecase, statusesUsecase, timelineUsecase, dao.NewAccount(db),
 	)
 
 	ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGTERM, os.Interrupt)
@@ -50,7 +52,8 @@ func Run() error {
 	}()
 
 	<-ctx.Done()
-	ctx, _ = context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal(err)
 	}

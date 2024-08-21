@@ -19,10 +19,11 @@ test:
 
 #https://github.com/golangci/golangci-lint/issues/2649
 lint:
-	if ! [ -x $(GOPATH)/bin/golangci-lint ]; then \
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.45.2; \
+	if ! [ -x $(HOME)/.local/bin/golangci-lint ]; then \
+		mkdir -p $(HOME)/.local/bin; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(HOME)/.local/bin; \
 	fi
-	golangci-lint run --concurrency 2
+	$(HOME)/.local/bin/golangci-lint run --concurrency 2
 
 vet:
 	go vet ./...
